@@ -1,4 +1,5 @@
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, UpdateView, DeleteView
 from django.views.generic.base import View
@@ -36,7 +37,7 @@ class PostDetailView(DetailView):
         return context
 
 
-class PostEditView(UpdateView):
+class PostEditView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostEditForm
     pk_url_kwarg = "id"
@@ -52,35 +53,35 @@ class PostEditView(UpdateView):
         return context
 
 
-class LikePostView(View):
+class LikePostView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         post = Post.objects.get(id=kwargs["id"])
         post.like_post(request.user)
         return redirect("post-details", post.id)
 
 
-class UnLikePostView(View):
+class UnLikePostView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         post = Post.objects.get(id=kwargs["id"])
         post.unlike_post(request.user)
         return redirect("post-details", post.id)
 
 
-class LikePostViewHome(View):
+class LikePostViewHome(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         post = Post.objects.get(id=kwargs["id"])
         post.like_post(request.user)
         return redirect(f"/#post-{post.id}")
 
 
-class UnLikePostViewHome(View):
+class UnLikePostViewHome(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         post = Post.objects.get(id=kwargs["id"])
         post.unlike_post(request.user)
         return redirect(f"/#post-{post.id}")
 
 
-class CommentEditView(DetailView):
+class CommentEditView(LoginRequiredMixin, DetailView):
     model = Post
     pk_url_kwarg = "id"
     template_name = "post_detail.html"
@@ -113,7 +114,7 @@ class CommentEditView(DetailView):
         return context
 
 
-class DeletePostView(DeleteView):
+class DeletePostView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = "confirm_post_delete.html"
     success_url = reverse_lazy("home")
@@ -127,7 +128,7 @@ class DeletePostView(DeleteView):
         return context
 
 
-class DeleteCommentView(DeleteView):
+class DeleteCommentView(LoginRequiredMixin, DeleteView):
     model = Comment
     template_name = "confirm_comment_delete.html"
 
