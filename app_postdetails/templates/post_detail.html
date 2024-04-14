@@ -112,8 +112,7 @@
   <div id="comments-section" class="my-5 row">
     <div class="col-3"></div>
     <div class="col-9">
-      {% load crispy_forms_tags %}
-
+      {% load crispy_forms_tags %} {% if user.is_authenticated %}
       <form method="post">
         {% csrf_token %} {{comment_form|crispy}}
 
@@ -121,6 +120,13 @@
           <input class="btn btn-primary" type="submit" value="Comment" />
         </div>
       </form>
+      {% else %}
+      <h3 class="bg-white p-4 text-center custom_shadow">
+        Please
+        <a href="{% url 'login' %}" style="text-decoration: none">Login</a> to
+        Comment
+      </h3>
+      {% endif %}
     </div>
 
     {% for comment in comments %}
