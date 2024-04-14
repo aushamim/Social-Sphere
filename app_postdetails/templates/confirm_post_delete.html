@@ -1,0 +1,23 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block header_title %}{{title}}{% endblock header_title %}
+
+{% block content %}
+
+<div class="px-3 mt-3">
+  <div class="w-50 mx-auto">
+    <h1>{{title}}</h1>
+    <h4 class="mb-3">Are you sure you want to delete?</h4>
+    <form method="post">
+      {% csrf_token %}
+      <input class="btn btn-danger" type="submit" value="Delete" />
+      <a class="btn btn-success" href="{% url 'post-details' post.id %}"
+        >Cancel</a
+      >
+    </form>
+  </div>
+</div>
+
+{% endblock content %}

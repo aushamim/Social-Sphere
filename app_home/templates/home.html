@@ -1,0 +1,104 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="px-3 mt-3">
+  <h1 class="text-center">Welcome to SocialSphere</h1>
+
+  <h4 class="mt-5">All Posts</h4>
+
+  {% for post in posts %}
+  <div id="post-{{post.id}}" class="mb-5">
+    <div class="row">
+      <div class="col-3">
+        <div class="bg-white p-2 rounded custom_shadow">
+          <div class="row align-items-center">
+            <div class="col-4">
+              <a href="{% url 'profile' post.user.profile.id %}">
+                {% if post.user.profile.profile_picture %}
+                <img
+                  class="w-100 rounded"
+                  src="/{{post.user.profile.profile_picture}}"
+                  alt="{{post.user.username}}'s dp"
+                />
+                {% elif post.user.profile.gender == 'Female' %}
+                <img
+                  class="w-100 rounded"
+                  src="{% static 'images/default_female.png' %}"
+                  alt="{{post.user.username}}'s dp"
+                />
+                {% else %}
+                <img
+                  class="w-100 rounded"
+                  src="{% static 'images/default_male.png' %}"
+                  alt="{{post.user.username}}'s dp"
+                />
+                {% endif %}
+              </a>
+            </div>
+            <div class="col-8">
+              <h6 class="mb-2">Likes: {{post.likes.all|length}}</h6>
+              <h6 class="mb-2">Comments: {{post.comments.all|length}}</h6>
+              <p class="m-0">{{post.timestamp|timesince}} ago</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-2">
+          <a
+            href="{% url 'post-details' post.id %}"
+            class="btn btn-sm btn-outline-primary w-100"
+            >Open Post</a
+          >
+        </div>
+        <div class="mt-2 row gx-2">
+          <div class="col-6">
+            {% if user in post.likes.all %}
+            <form action="{% url 'unlike-post-h' post.id %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger w-100" type="submit">
+                Unlike
+              </button>
+            </form>
+            {% else %}
+            <form action="{% url 'like-post-h' post.id %}" method="post">
+              {% csrf_token %}
+              <button
+                class="btn btn-sm btn-outline-primary w-100"
+                type="submit"
+              >
+                Like
+              </button>
+            </form>
+            {% endif %}
+          </div>
+          <div class="col-6">
+            <a
+              href="{% url 'post-details' post.id %}"
+              class="btn btn-sm btn-outline-primary w-100"
+              >Comment</a
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-9">
+        <div class="bg-white p-2 rounded custom_shadow">
+          {{post.post|linebreaksbr|truncatewords:50}}
+        </div>
+        {% if post.image %}
+        <div class="mt-2">
+          <img
+            class="w-100 rounded"
+            src="/{{post.image}}"
+            alt="Post Image - {{post.id}}"
+          />
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock content %}

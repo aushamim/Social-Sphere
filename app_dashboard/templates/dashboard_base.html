@@ -1,0 +1,26 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="px-3">
+  <div class="row align-items-center">
+    <div class="col-6">
+      <h4>Hello {{user.first_name}} {{user.last_name}}</h4>
+    </div>
+    <div class="col-6 d-flex justify-content-end">
+      <a href="{% url 'add-post' %}" class="btn btn-outline-primary me-2"
+        >Add Post</a
+      >
+      <a href="{% url 'my-posts' %}" class="btn btn-outline-primary"
+        >My Posts</a
+      >
+    </div>
+  </div>
+
+  <div class="mt-5">
+    {% block dashboard_content %} {% endblock dashboard_content %}
+  </div>
+</div>
+
+{% endblock content %}

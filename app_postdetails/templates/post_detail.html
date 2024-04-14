@@ -1,0 +1,211 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block header_title %}{{title}}{% endblock header_title %}
+
+{% block content %}
+
+<div class="px-3">
+  <div class="mb-5">
+    <div class="row">
+      <div class="col-3">
+        <div class="bg-white p-2 rounded custom_shadow">
+          <div class="row align-items-center">
+            <div class="col-4">
+              <a href="{% url 'profile' object.user.profile.id %}">
+                {% if object.user.profile.profile_picture %}
+                <img
+                  class="w-100 rounded"
+                  src="/{{object.user.profile.profile_picture}}"
+                  alt="{{object.user.username}}'s dp"
+                />
+                {% elif object.user.profile.gender == 'Female' %}
+                <img
+                  class="w-100 rounded"
+                  src="{% static 'images/default_female.png' %}"
+                  alt="{{object.user.username}}'s dp"
+                />
+                {% else %}
+                <img
+                  class="w-100 rounded"
+                  src="{% static 'images/default_male.png' %}"
+                  alt="{{object.user.username}}'s dp"
+                />
+                {% endif %}
+              </a>
+            </div>
+            <div class="col-8">
+              <h6 class="mb-2">Likes: {{object.likes.all|length}}</h6>
+              <h6 class="mb-2">Comments: {{object.comments.all|length}}</h6>
+              <p class="m-0">{{object.timestamp|timesince}} ago</p>
+            </div>
+          </div>
+        </div>
+        {% if object.user == user %}
+        <div class="mt-2">
+          <div class="mt-2 row gx-2">
+            <div class="col-6">
+              <a
+                href="{% url 'edit-post' object.id %}"
+                class="btn btn-sm btn-outline-primary w-100"
+                >Edit Post</a
+              >
+            </div>
+            <div class="col-6">
+              <a
+                href="{% url 'delete-post' object.id %}"
+                class="btn btn-sm btn-outline-danger w-100"
+                >Delete Post</a
+              >
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        <div class="mt-2 row gx-2">
+          <div class="col-6">
+            {% if user in post.likes.all %}
+            <form action="{% url 'unlike-post' object.id %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger w-100" type="submit">
+                Unlike
+              </button>
+            </form>
+            {% else %}
+            <form action="{% url 'like-post' object.id %}" method="post">
+              {% csrf_token %}
+              <button
+                class="btn btn-sm btn-outline-primary w-100"
+                type="submit"
+              >
+                Like
+              </button>
+            </form>
+            {% endif %}
+          </div>
+          <div class="col-6">
+            <a
+              href="#comments-section"
+              class="btn btn-sm btn-outline-primary w-100"
+              >Comment</a
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-9">
+        <div class="bg-white p-2 rounded custom_shadow">
+          {{object.post|linebreaksbr}}
+        </div>
+        {% if object.image %}
+        <div class="mt-2">
+          <img
+            class="w-100 rounded"
+            src="/{{object.image}}"
+            alt="Post Image - {{object.id}}"
+          />
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div id="comments-section" class="my-5 row">
+    <div class="col-3"></div>
+    <div class="col-9">
+      {% load crispy_forms_tags %}
+
+      <form method="post">
+        {% csrf_token %} {{comment_form|crispy}}
+
+        <div class="d-flex justify-content-end mt-2 mb-4">
+          <input class="btn btn-primary" type="submit" value="Comment" />
+        </div>
+      </form>
+    </div>
+
+    {% for comment in comments %}
+    <div class="row g-0 my-3">
+      <div class="col-3 row g-0">
+        <div class="col-9"></div>
+        <div class="col-3 pe-3">
+          <a href="{% url 'profile' comment.user.profile.id %}">
+            {% if comment.user.profile.profile_picture %}
+            <img
+              class="w-100 rounded mt-1"
+              src="/{{comment.user.profile.profile_picture}}"
+              alt="{{comment.user.username}}'s dp"
+            />
+            {% elif comment.user.profile.gender == 'Female' %}
+            <img
+              class="w-100 rounded mt-1"
+              src="{% static 'images/default_female.png' %}"
+              alt="{{comment.user.username}}'s dp"
+            />
+            {% else %}
+            <img
+              class="w-100 rounded mt-1"
+              src="{% static 'images/default_male.png' %}"
+              alt="{{comment.user.username}}'s dp"
+            />
+            {% endif %}
+          </a>
+        </div>
+      </div>
+      <div class="col-9 row g-0 bg-white rounded custom_shadow">
+        <div class="col-11 ps-3 py-2">
+          <p>{{comment.comment|linebreaksbr}}</p>
+        </div>
+        <div class="col-1 p-2">
+          <a
+            href="{% url 'edit-comment' object.id comment.id %}"
+            class="btn btn-sm btn-outline-primary"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-pencil"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"
+              />
+              <path d="M13.5 6.5l4 4" />
+            </svg>
+          </a>
+          <a
+            href="{% url 'delete-comment' object.id comment.id %}"
+            class="btn btn-sm btn-outline-danger mt-2"
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-trash"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M4 7l16 0" />
+              <path d="M10 11l0 6" />
+              <path d="M14 11l0 6" />
+              <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+              <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg
+          ></a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock content %}

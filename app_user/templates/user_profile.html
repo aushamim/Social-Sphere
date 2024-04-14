@@ -1,0 +1,56 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %} 
+
+{% load static %}
+
+{% block header_title %}{{title}}{% endblock header_title %}
+
+{% block content %}
+
+<div class="px-3 mb-5">
+  <div class="row">
+    <div class="col-3">
+      {% if profile.profile_picture %}
+      <img
+        class="w-100 rounded"
+        src="/{{profile.profile_picture}}"
+        alt="{{profile.user.username}}'s dp"
+      />
+      {% elif profile.gender == 'Female' %}
+      <img
+        class="w-100 rounded"
+        src="{% static 'images/default_female.png' %}"
+        alt="{{profile.user.username}}'s dp"
+      />
+      {% else %}
+      <img
+        class="w-100 rounded"
+        src="{% static 'images/default_male.png' %}"
+        alt="{{profile.user.username}}'s dp"
+      />
+      {% endif %} {% if profile.user == user %}
+      <a href="{% url 'edit-user' %}" class="btn btn-primary fw-bold w-100 mt-3"
+        >Edit Profile</a
+      >
+      {% endif %}
+    </div>
+    <div class="col-9">
+      <h6 class="text-muted">Name</h6>
+      <h4>{{profile.user.first_name}} {{profile.user.last_name}}</h4>
+
+      <h6 class="text-muted mt-4">Age</h6>
+      <h4>{{profile.birth_date}}</h4>
+
+      <h6 class="text-muted mt-4">Gender</h6>
+      <h4>{{profile.gender}}</h4>
+
+      <h6 class="text-muted mt-4">Phone No.</h6>
+      <h4>{{profile.phone}}</h4>
+
+      <h6 class="text-muted mt-4">Address</h6>
+      <h4>{{profile.address}}</h4>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
