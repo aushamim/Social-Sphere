@@ -122,6 +122,7 @@ class EditUserProfileView(LoginRequiredMixin, UpdateView):
             initial["birth_date"] = profile.birth_date
             initial["gender"] = profile.gender
             initial["address"] = profile.address
+            initial["profile_picture"] = profile.profile_picture
         return initial
 
     def form_valid(self, form):
