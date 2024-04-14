@@ -33,7 +33,9 @@ class SignUpView(CreateView):
 
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        activation_link = f"http://127.0.0.1:8000/user/activate/{uid}/{token}/"
+        activation_link = (
+            f"https://social-sphere-gu6t.onrender.com/user/activate/{uid}/{token}/"
+        )
 
         message = render_to_string(
             "activate_account.html",
